@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Zeitman Tracker v||VERSION||</title>
+    <link rel="icon" href="/images/the_man_noexif.jpg">
+    <link rel="stylesheet" href="/style/index.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="manifest" href="/style/manifest.json" />
+</head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G84YQY4PV6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-G84YQY4PV6');
+</script>
+    <body>
+        <a>For updates</a>
+        <a href="https://twitter.com/ZeitmanTracker?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @ZeitmanTracker</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+        <!-- Menu Bar -->
+        <div class="menu">
+            <div class="menu-item">
+                <button onclick="window.location.href='https://forms.gle/9T482hmDuz18g5WF9'">Request a feature or report a bug</button>
+            </div>
+            <div class="menu-item gettheapp">
+                <button onclick="window.location.href='/get-the-app'">Get the app!</button>
+            </div>
+        </div>
+        <div class="menu-item">
+                <button onclick="updateAndReloadServiceWorker()">Repair</button>
+            </div>
+        <div>
+            Created by the Senior Class of 2022
+        </div>
+        <h5 style="margin:0px; padding:0px; display: none">
+          Unique visitors: {VISITOR_COUNT}!
+        </h5>
+        <a class="reloadif">(Reload if the map isn't working)</a>
+
+        <canvas class="map"></canvas>
+    </body>
+</html>
+<script>
+    selectedLocation = "||location||"
+</script>
+<script src="/style/index.js"></script>

@@ -1,0 +1,23 @@
+{
+  "name": "Zeitman Tracker",
+  "short_name": "ZeitmanTracker",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2C3333",
+  "theme_color": "#db4938",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/the_man_noexif.jpg",
+      "type": "image/png", "sizes": "71x107"
+    },
+  {
+      "src": "/images/the_man_noexif_512.jpg",
+      "type": "image/png", "sizes": "512x612"
+  },
+      {
+          "src": "/images/the_man_noexif_192.jpg",
+          "type": "image/png", "sizes": "192x192"
+      }
+  ]
+}
