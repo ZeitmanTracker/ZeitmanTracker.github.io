@@ -18,26 +18,26 @@ updateAndReloadServiceWorker = (data) => {
     window.location.reload(true);
 }
 
-if (localStorage['version'] == undefined){
-    fetch('/getversion').then((response) => {
-        return response.text();
-    }).then((data) => {
-        updateAndReloadServiceWorker(data);
-    });
-} else {
-    fetch('/getversion').then((response) => {
-        return response.text();
-    }).then((data) => {
-        if (data != localStorage['version']) {
-            updateAndReloadServiceWorker(data);
-        }
-    });
-}
+// if (localStorage['version'] == undefined){
+//     fetch('/getversion').then((response) => {
+//         return response.text();
+//     }).then((data) => {
+//         updateAndReloadServiceWorker(data);
+//     });
+// } else {
+//     fetch('/getversion').then((response) => {
+//         return response.text();
+//     }).then((data) => {
+//         if (data != localStorage['version']) {
+//             updateAndReloadServiceWorker(data);
+//         }
+//     });
+// }
 
-if (localStorage['forcereload'] == undefined){
-    localStorage['forcereload'] = true;
-    updateAndReloadServiceWorker(null)
-}
+// if (localStorage['forcereload'] == undefined){
+//     localStorage['forcereload'] = true;
+//     updateAndReloadServiceWorker(null)
+// }
 
 // hide the "get the app" button if the user is on a PWA app
 if (window.matchMedia('(display-mode: standalone)').matches){
@@ -135,7 +135,7 @@ sendReport = (location) => {
     }
 
     // send a post request to /submitreport/<location>
-    fetch('/submitreport/' + location, {
+    fetch('https://zietman-tracker.ziettracker.repl.co/submitreport/' + location, {
         method: 'POST'
     }).then((response) => {
         if (response.status == 200) {
@@ -165,7 +165,7 @@ redrawMap = () => {
         var pin = new Image();
         pin.onload = function() {
             // draw the snap locations
-            fetch('/reports').then((response) => {
+            fetch('https://zietman-tracker.ziettracker.repl.co/reports').then((response) => {
                 return response.json();
             }).then((data) => {
                 for (var key in snapLocations) {
@@ -231,7 +231,7 @@ setInterval(() => {
     // if document is hidden, don't update
     if (document.hidden) return;
     // Automatic location updater
-    fetch("/getlocation").then((response) => {
+    fetch("https://zietman-tracker.ziettracker.repl.co/getlocation").then((response) => {
         return response.text()
     }).then((data) => {
         if (data.trim() != selectedLocation){
@@ -241,20 +241,20 @@ setInterval(() => {
     })
 }, 10*1000)// 10 seconds
 
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", function() {
-    if (navigator.serviceWorker.controller) {
-      console.log("Active service worker found, no need to register");
-    } else {
-        const registration = navigator.serviceWorker.register("/sw.js",
-            {scope: "/"}
-        );
+// if ("serviceWorker" in navigator) {
+//   window.addEventListener("load", function() {
+//     if (navigator.serviceWorker.controller) {
+//       console.log("Active service worker found, no need to register");
+//     } else {
+//         const registration = navigator.serviceWorker.register("/sw.js",
+//             {scope: "/"}
+//         );
     
-        registration.then(function(registration) {
-          console.log("ServiceWorker registration successful with scope: ", registration.scope);
-        }, function(err) {
-            console.log("ServiceWorker registration failed: ", err);
-        });
-    }
-  })
-}
+//         registration.then(function(registration) {
+//           console.log("ServiceWorker registration successful with scope: ", registration.scope);
+//         }, function(err) {
+//             console.log("ServiceWorker registration failed: ", err);
+//         });
+//     }
+//   })
+// }

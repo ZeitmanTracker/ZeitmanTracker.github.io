@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <title>Zeitman Tracker v||VERSION||</title>
     <link rel="icon" href="/images/the_man_noexif.jpg">
-    <link rel="stylesheet" href="/style/index.css">
+    <link rel="stylesheet" href="/index.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link rel="manifest" href="/style/manifest.json" />
+    <link rel="manifest" href="/manifest.json" />
 </head>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-G84YQY4PV6"></script>
 <script>
@@ -45,5 +45,10 @@
 </html>
 <script>
     selectedLocation = "||location||"
+    fetch("https://zietman-tracker.ziettracker.repl.co/getlocation").then((response) => {
+        return response.text()
+    }).then((data) => {
+        window.selectedLocation = data.trim()
+    })
 </script>
-<script src="/style/index.js"></script>
+<script src="/index.js"></script>
