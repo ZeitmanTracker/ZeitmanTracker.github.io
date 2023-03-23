@@ -18,8 +18,36 @@
   gtag('config', 'G-G84YQY4PV6');
 </script>
     <body>
-        <h1>HOW TO GET THE APP</h1>
-        <li>Click the three dots in your browser <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 8c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm0 2c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"/></svg></li>
-        <li>Then click "Add to Home screen"</li>
+        <button id="btnAd">Install (might work)</button><br>
+        <a href="https://support.apple.com/guide/iphone/bookmark-favorite-webpages-iph42ab2f3a7/ios#:~:text=You%20can%20add%20a%20website,Home%20Screen%20for%20quick%20access.&text=in%20the%20menu%20bar%2C%20scroll,device%20where%20you%20add%20it.&text=Helpful%3F">Instructions for iPhones</a>
+        <br>
+        <a href="https://browserhow.com/how-to-add-to-home-screen-shortcut-links-with-chrome-android/#add-to-home-screen">Instructions for Android/Chrome</a>
     </body>
 </html>
+
+<script>
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Prevent the mini-infobar from appearing on mobile
+      e.preventDefault();
+      // Stash the event so it can be triggered later.
+      deferredPrompt = e;
+      // Update UI notify the user they can install the PWA
+      // showInstallPromotion();
+      // Optionally, send analytics event that PWA install promo was shown.
+      console.log(`'beforeinstallprompt' event was fired.`);
+    });
+    
+        document.getElementById('btnAd').addEventListener('click', async () => {
+      // Hide the app provided install promotion
+      // hideInstallPromotion();
+      // Show the install prompt
+      deferredPrompt.prompt();
+      // Wait for the user to respond to the prompt
+      const { outcome } = await deferredPrompt.userChoice;
+      // Optionally, send analytics event with outcome of user choice
+      console.log(`User response to the install prompt: ${outcome}`);
+            alert(outcome)
+      // We've used the prompt, and can't use it again, throw it away
+      deferredPrompt = null;
+    });
+</script>
