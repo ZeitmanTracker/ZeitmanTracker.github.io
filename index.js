@@ -1,3 +1,13 @@
+if (window.matchMedia('(display-mode: standalone)').matches){
+    document.getElementsByClassName('gettheapp')[0].style.display = 'none';
+} else if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
+    // If we wanna force getting the app
+} else {
+    document.getElementsByClassName('gettheapp')[0].style.display = 'none';
+}
+
+
+
 mouseX = 0;
 mouseY = 0;
 
