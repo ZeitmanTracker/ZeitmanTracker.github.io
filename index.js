@@ -1,6 +1,6 @@
 // CONFIG =========================
-API_URL = 'http://localhost' // DEVELOPMENT
-// API_URL = 'https://zietman-tracker.ziettracker.repl.co' // PRODUCTION
+// API_URL = 'http://localhost' // DEVELOPMENT
+API_URL = 'https://zietman-tracker.ziettracker.repl.co' // PRODUCTION
 
 // ================================
 
