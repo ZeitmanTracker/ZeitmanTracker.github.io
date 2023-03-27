@@ -1,3 +1,16 @@
+// CONFIG =========================
+API_URL = 'http://localhost' // DEVELOPMENT
+// API_URL = 'https://zietman-tracker.ziettracker.repl.co' // PRODUCTION
+
+// ================================
+
+selectedLocation = "||location||"
+fetch(`${API_URL}/getlocation`).then((response) => {
+    return response.text()
+}).then((data) => {
+    window.selectedLocation = data.trim()
+})
+
 if (window.matchMedia('(display-mode: standalone)').matches){
     document.getElementsByClassName('gettheapp')[0].style.display = 'none';
 } else if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
@@ -6,19 +19,19 @@ if (window.matchMedia('(display-mode: standalone)').matches){
     document.getElementsByClassName('gettheapp')[0].style.display = 'none';
 }
 
-
-
 mouseX = 0;
 mouseY = 0;
 
-pinX = 25;
-pinY = 25;
+teacherPinLocation = {
+    'zeitman': 'office',
+    'holey':   'office',
+}
 
 String.prototype.capFirst = function() {return this.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });};
 
 snapLocations = {
     '100_hall': [645, 210],
-    '200_hall': [377, 205],
+    '200_hall': [377, 190],
     '300_hall': [740, 379],
     '400_hall': [604, 406],
     'media_center': [512, 284],
@@ -40,16 +53,14 @@ boxSize = [100, 40]; // height and min width of the box
 ctx = document.getElementsByClassName('map')[0].getContext('2d');
 
 document.getElementsByClassName('map')[0].addEventListener('click', () => {
-    console.log(mouseX, mouseY);
+    // console.log(mouseX, mouseY);
 
     // check if the mouse is in a snap location
     for (var key in snapLocations) {
         if (snapLocations.hasOwnProperty(key)) {
-            extraWidth = key.length * 2.75;
-            if (mouseX >= snapLocations[key][0] && mouseX <= snapLocations[key][0] + boxSize[0] + extraWidth && mouseY >= snapLocations[key][1] && mouseY <= snapLocations[key][1] + boxSize[1]) {
-                if (confirm("Are you sure you want to report " + key.replaceAll("_", " ").capFirst() + "?")) {
-                    sendReport(key);
-                }
+            extraWidth = key.length * 2.8;
+            if (mouseX >= snapLocations[key][0] && mouseX <= snapLocations[key][0] + (boxSize[0]) + extraWidth && mouseY >= snapLocations[key][1] && mouseY <= snapLocations[key][1] + (boxSize[1] + 10)) {
+                getReportChoice(key);
             }
         }
     }
@@ -60,6 +71,42 @@ document.getElementsByClassName('map')[0].addEventListener('mousemove', (e) => {
     mouseX = pos.x;
     mouseY = pos.y;
 });
+
+getReportChoice = (location) => {
+    return new Promise((resolve, reject) => {
+      alertify.confirm('Who would you like to report?', () => {
+        setTimeout(() => {
+            confirmThen('Are you sure?', 'Are you sure you want to report Zeitman at the ' + location.replaceAll("_"," ").capFirst() + '?', () => {
+              sendReport(location, 'zeitman');
+            });
+        }, 1000)
+      },
+      () => {
+        setTimeout(() => {
+            confirmThen('Are you sure?', 'Are you sure you want to report Holey at the ' + location.replaceAll("_"," ").capFirst() + '?', () => {
+              sendReport(location, 'holey');
+            });
+        }, 1000)
+      })
+        .setting({
+          'labels': {
+            ok: 'Zeitman',
+            cancel: 'Holey'
+          },
+          'title': 'Submit a report for ' + location.replaceAll("_", " ").capFirst() + '?',
+          'invokeOnCloseOff': true, // so we can close the dialog without invoking the callback
+        })
+    });
+};
+
+confirmThen = (title, message, then) => {
+    alertify.confirm(title, message, then, () => {}).setting({
+        'labels': {
+            ok: 'Yes',
+            cancel: 'No'
+        }
+    });
+}
 
 getRelativeMousePosition = (e) => {
     var rect = document.getElementsByClassName('map')[0].getBoundingClientRect(),
@@ -72,7 +119,7 @@ getRelativeMousePosition = (e) => {
     }
 }
 
-sendReport = (location) => {
+sendReport = (location, teacher) => {
     if (localStorage['amt'] == undefined) {
         localStorage['amt'] = 0;
     } else if (localStorage['amt'] == 0) {
@@ -87,19 +134,18 @@ sendReport = (location) => {
     if (Date.now() - localStorage['time'] > 5 * 60 * 60 * 1000) localStorage['amt'] = 0; // 5 hours (in milliseconds)
 
     if (localStorage['amt'] > 10) {
-        alert("You have submitted too many reports (10)! Come back later (5h).")
+        alertify.error("You have submitted too many reports!");
         return;
     }
 
-    // send a post request to /submitreport/<location>
-    fetch('https://zietman-tracker.ziettracker.repl.co/submitreport/' + location, {
+    fetch(`${API_URL}/submitreport/${teacher}/${location}`, {
         method: 'POST'
     }).then((response) => {
         if (response.status == 200) {
-            alert("Report submitted!");
+            alertify.success("Report submitted!");
             redrawMap()
         } else {
-            alert("Report failed to submit!");
+            alertify.error("Error submitting report!");
         }
     });
 }
@@ -109,60 +155,61 @@ redrawMap = () => {
     ctx.scale(1, 1);
     var img = new Image();
 
-    if (selectedLocation != undefined) {
-        pinX = snapLocations[selectedLocation][0];
-        pinY = snapLocations[selectedLocation][1];
-    }
-
     img.onload = function() {
         ctx.drawImage(img, 0, 0);
-
         
         // draw /images/the_man_noexif.png at pinX, pinY
-        var pin = new Image();
-        pin.onload = function() {
-            // draw the snap locations
-            fetch('https://zietman-tracker.ziettracker.repl.co/reports').then((response) => {
+        var zeitmanPin = new Image();
+        zeitmanPin.onload = function() {
+            fetch(`${API_URL}/reports`).then((response) => {
                 return response.json();
             }).then((data) => {
-                for (var key in snapLocations) {
+                for (var key in data){
                     if (snapLocations.hasOwnProperty(key)) {
-                        // draw a box with text inside it
                         ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-                        // ctx.fillRect(snapLocations[key][0], snapLocations[key][1], boxSize[0], boxSize[1]);
-                        extraWidth = key.length * 2.75;
-                        ctx.fillRect(snapLocations[key][0], snapLocations[key][1], boxSize[0] + extraWidth, boxSize[1]);
-                        
+                        extraWidth = key.capFirst().length * 2.8;
+                        ctx.fillRect(snapLocations[key][0], snapLocations[key][1], boxSize[0] + extraWidth, boxSize[1] + (Object.keys(data[key]).length * 8));
+
                         ctx.fillStyle = 'white';
                         ctx.font = '18px Arial bold';
                         ctx.fillText(key.replaceAll("_", " ").capFirst(), snapLocations[key][0] + 5, snapLocations[key][1] + 15);
                         // amount of reports
                         ctx.fillStyle = 'white';
                         ctx.font = '14px Arial';
-                        ctx.fillText(data[key] + ' report(s)', snapLocations[key][0] + 5, snapLocations[key][1] + 35);
+                        yMod = 0;
+                        for (teacher in data[key]){
+                            ctx.fillText(`${teacher} - ${data[key][teacher]}`, snapLocations[key][0] + 5, snapLocations[key][1] + 35 + yMod);
+                            yMod += 15;
+                        }
                     }
+                }
+
+                holeyPin = new Image();
+                holeyPin.src = '/images/holey.png';
+                holeyPin.onload = () => {
+                    // ctx.drawImage(zeitmanPin, pinX, pinY - 25, 30, 30);
+                    zeitmanLocation = snapLocations[teacherPinLocation['zeitman']]
+                    ctx.drawImage(zeitmanPin, zeitmanLocation[0], zeitmanLocation[1] - 25, 30, 30);
+                    holeyLocation = snapLocations[teacherPinLocation['holey']]
+                    ctx.drawImage(holeyPin, holeyLocation[0] + 40, holeyLocation[1] - 25, 30, 30);
+    
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+                    ctx.fillRect(0, 0, 300, 30);
+                    ctx.fillStyle = 'white';
+                    ctx.font = '16px Arial';
+                    ctx.fillText('Click a location to report it', 5, 20);
+        
+                    // scale the cavas to fit on the screen without scrolling
+                    var scale = Math.min(document.getElementsByClassName('map')[0].width / img.width, document.getElementsByClassName('map')[0].height / img.height);
+                    ctx.scale(scale, scale);
                 }
             });
 
-
-            ctx.drawImage(pin, pinX, pinY - 25, 30, 30);
-
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-            ctx.fillRect(0, 0, 300, 30);
-            ctx.fillStyle = 'white';
-            ctx.font = '16px Arial';
-            ctx.fillText('Click a location to report it', 5, 20);
-
-            // scale the cavas to fit on the screen without scrolling
-            var scale = Math.min(document.getElementsByClassName('map')[0].width / img.width, document.getElementsByClassName('map')[0].height / img.height);
-            ctx.scale(scale, scale);
         }
-        pin.src="/images/the_man_noexif.jpg"
+        zeitmanPin.src="/images/the_man_noexif.jpg"
     }
     img.src = '/images/map_noexif.jpg';
 
-    // draw the pin at pinX, pinY
-    // set the canvas size to the image size
     document.getElementsByClassName('map')[0].width = img.width;
     document.getElementsByClassName('map')[0].height = img.height;
 }
@@ -180,38 +227,28 @@ document.getElementsByClassName('map')[0].width = img.width;
 document.getElementsByClassName('map')[0].height = img.height;
 
 setTimeout(() => {
-  redrawMap()
-  redrawMap()
+    locationChecker()
+    redrawMap()
 }, 1000)
+
+locationChecker = () => {
+    fetch(`${API_URL}/getlocation`).then((response) => {
+        return response.json()
+    }).then((data) => {
+        if (data['zeitman'] != teacherPinLocation['zeitman']){
+            teacherPinLocation['zeitman'] = data['zeitman'];
+            redrawMap();
+        }
+        if (data['holey'] != teacherPinLocation['holey']){
+            teacherPinLocation['holey'] = data['holey'];
+            redrawMap();
+        }
+    })
+}
 
 setInterval(() => {
     // if document is hidden, don't update
     if (document.hidden) return;
     // Automatic location updater
-    fetch("https://zietman-tracker.ziettracker.repl.co/getlocation").then((response) => {
-        return response.text()
-    }).then((data) => {
-        if (data.trim() != selectedLocation){
-            console.log("He moved!!!")
-            window.location.reload()
-        }
-    })
+    locationChecker()
 }, 10*1000)// 10 seconds
-
-// if ("serviceWorker" in navigator) {
-//   window.addEventListener("load", function() {
-//     if (navigator.serviceWorker.controller) {
-//       console.log("Active service worker found, no need to register");
-//     } else {
-//         const registration = navigator.serviceWorker.register("/sw.js",
-//             {scope: "/"}
-//         );
-    
-//         registration.then(function(registration) {
-//           console.log("ServiceWorker registration successful with scope: ", registration.scope);
-//         }, function(err) {
-//             console.log("ServiceWorker registration failed: ", err);
-//         });
-//     }
-//   })
-// }

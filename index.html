@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="manifest" href="/manifest.json" />
+    <link rel="stylesheet" href="/semantic.min.css" />
+    <link rel="stylesheet" href="/alertify.min.css" />
 </head>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-MWMPH7XCNZ"></script>
 <script>
@@ -29,23 +31,16 @@
         <div class="menu-item">
             <button onclick="window.location.href='/get-the-app'" class="gettheapp">Get the app!</button>
         </div>
-        <div>
+        <a>
             Created by the Senior Class of 2022
-        </div>
+        </a>
         <h5 style="margin:0px; padding:0px; display: none">
           Unique visitors: {VISITOR_COUNT}!
-        </h5>
+        </h5><br>
         <a class="reloadif">(Reload if the map isn't working)</a>
 
         <canvas class="map"></canvas>
     </body>
 </html>
-<script>
-    selectedLocation = "||location||"
-    fetch("https://zietman-tracker.ziettracker.repl.co/getlocation").then((response) => {
-        return response.text()
-    }).then((data) => {
-        window.selectedLocation = data.trim()
-    })
-</script>
+<script src="/alertify.min.js"></script>
 <script src="/index.js"></script>
