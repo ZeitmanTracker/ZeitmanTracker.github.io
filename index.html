@@ -36,7 +36,7 @@
         </div>
         <a id="voteteacherdisp">
             Current Vote Teacher: ??VOTE_TEACHER??<br>
-            Created by the Senior Class of 2022
+            Created by the Senior Class of ??YEAR??
         </a>
         <h5 style="margin:0px; padding:0px; display: none">
           Unique visitors: {VISITOR_COUNT}!
@@ -71,3 +71,7 @@
 </html>
 <script src="/alertify.min.js"></script>
 <script src="/index.js"></script>
+<script>
+    var year = Math.floor(Math.random() * (2030 - 1945 + 1)) + 1945; // 1945-2030
+    document.getElementById("voteteacherdisp").innerHTML = document.getElementById("voteteacherdisp").innerHTML.replace("??YEAR??", year);
+</script>
