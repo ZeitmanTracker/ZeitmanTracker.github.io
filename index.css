@@ -51,3 +51,81 @@ html, body, #map {
     padding: 0px;
     margin: 0px;
 }
+
+.votemenu {
+    /* take up the whole screen and fill with white except for a 5% margin around the sides */
+    position: fixed;
+    top: 5%;
+    left: 5%;
+    width: 90%;
+    height: 50%;
+    background-color: #ffffff;
+
+    /* Round the border and make it black */
+    border-radius: 10px;
+    border: 1px solid #000000;
+}
+
+.votemenu .closebutton {
+    /* position the close button in the top right corner */
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    margin: 5px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+}
+
+.votemenu .votelist {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.votemenu .votelist button {
+    margin-top: 10px;
+    /* rounded edges, cyan button, white text, gets darker when cliked */
+    border-radius: 10px;
+    background-color: #00ffff;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px;
+    cursor: pointer;
+    width: 125px;
+    height: 40px;
+}
+
+.votemenu .votelist button:active {
+    background-color: #00b3b3da;
+}
+
+.current-firstplace, .current-secondplace, .current-thirdplace {
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
+    text-align: center;
+    padding: 5x;
+}
+
+.current-firstplace {
+    margin-top: 15px;
+}
+
+.current-standings {
+    margin-top: 40px;
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
+    text-align: center;
+    padding: 5x;
+}

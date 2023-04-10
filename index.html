@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Zeitman Tracker v||VERSION||</title>
+    <title>Zeitman Tracker v2</title>
     <link rel="icon" href="/images/the_man_noexif.jpg">
     <link rel="stylesheet" href="/index.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -27,11 +27,15 @@
             <div class="menu-item">
                 <button onclick="window.location.href='https://forms.gle/9T482hmDuz18g5WF9'">Request a feature or report a bug</button>
             </div>
+            <div class="menu-item">
+                <button class="votebutton">Vote for the weekly staff member</button>
+            </div>
         </div>
         <div class="menu-item">
             <button onclick="window.location.href='/get-the-app'" class="gettheapp">Get the app!</button>
         </div>
-        <a>
+        <a id="voteteacherdisp">
+            Current Vote Teacher: ??VOTE_TEACHER??<br>
             Created by the Senior Class of 2022
         </a>
         <h5 style="margin:0px; padding:0px; display: none">
@@ -40,6 +44,29 @@
         <a class="reloadif">(Reload if the map isn't working)</a>
 
         <canvas class="map"></canvas>
+
+
+        <div class="votemenu" style="display:none">
+            <!-- X button in the top right corner -->
+            <div class="closebutton">
+                <button class="closebutton">X</button>
+            </div>
+
+            <!-- List of names with a selection box aka multi-choice -->
+            <div class="votelist">
+                <h4 style="color:black;margin:0px;margin-bottom:10px;">The vote teacher is selected every Monday at 11:30 AM</h4>
+                <h6 style="color:black;margin:0px;margin-bottom:25px">Only one vote per day!</h6>
+                <select id="teachers" name="teachersselect">
+                </select>
+
+                <button class="votesubmitbutton">Vote</button>
+                
+                <a class="current-standings">Current standings</a>
+                <a class="current-firstplace">1st. ???</a>
+                <a class="current-secondplace">2nd. ???</a>
+                <a class="current-thirdplace">3rd. ???</a>
+            </div>
+        </div>
     </body>
 </html>
 <script src="/alertify.min.js"></script>
